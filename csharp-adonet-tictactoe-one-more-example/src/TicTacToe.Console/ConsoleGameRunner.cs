@@ -73,26 +73,32 @@ public sealed class ConsoleGameRunner
 
     private async Task<bool> ProcessCommandAsync(string input, CancellationToken cancellationToken)
     {
+        const string CommandExitFromGame = "exit";
+        const string CommandQuitGame = "quit";
+        const string CommandNewGame = "new";
+        const string CommandAbortGame = "abort";
+        const string CommandGetGameHistory = "history";
+
         var shouldExit = false;
 
         switch (input)
         {
-            case "exit":
-            case "quit":
+            case CommandExitFromGame:
+            case CommandQuitGame:
                 WriteLine("Незавершённая сессия сохранена и будет восстановлена при следующем запуске.");
                 shouldExit = true;
                 break;
 
-            case "new":
+            case CommandNewGame:
                 await _service.StartNewAsync(PromptMode(), cancellationToken);
                 break;
 
-            case "abort":
+            case CommandAbortGame:
                 var abortOutcome = await _service.AbortAsync(cancellationToken);
                 WriteLine(abortOutcome.Accepted ? "Сессия прервана." : $"! {abortOutcome.Error}");
                 break;
 
-            case "history":
+            case CommandGetGameHistory:
                 await PrintHistoryAsync(cancellationToken);
                 break;
 
@@ -140,9 +146,12 @@ public sealed class ConsoleGameRunner
             var cells =
                 Enumerable
                 .Range(row * Board.Size, Board.Size)
-                .Select(index => session.Board[index] == Mark.None
-                    ? (index + 1).ToString()
-                    : session.Board[index].ToChar().ToString());
+                .Select(
+                    index =>
+                        session.Board[index] == Mark.None
+                        ? (index + 1).ToString()
+                        : session.Board[index].ToChar().ToString()
+                );
 
             WriteLine("   " + string.Join(" | ", cells));
 
@@ -168,29 +177,33 @@ public sealed class ConsoleGameRunner
 
     private static GameMode PromptMode()
     {
+        const string CommandSetGameModeHumanVsHuman = "1";
+        const string CommandSetGameModeHumanVsComputer = "2";
+        const string CommandSetGameModeComputerVsComputer = "3";
+
         GameMode? selected = null;
 
         while (selected is null)
         {
             WriteLine("Выберите режим новой игры:");
-            WriteLine("  1 — человек против человека");
-            WriteLine("  2 — человек против компьютера");
-            WriteLine("  3 — компьютер против компьютера");
+            WriteLine($"  {CommandSetGameModeHumanVsHuman} — человек против человека");
+            WriteLine($"  {CommandSetGameModeHumanVsComputer} — человек против компьютера");
+            WriteLine($"  {CommandSetGameModeComputerVsComputer} — компьютер против компьютера");
             Write("> ");
 
             var input = ReadLine()?.Trim();
 
             switch (input)
             {
-                case "1":
+                case CommandSetGameModeHumanVsHuman:
                     selected = GameMode.HumanVsHuman;
                     break;
                 
-                case "2":
+                case CommandSetGameModeHumanVsComputer:
                     selected = GameMode.HumanVsComputer;
                     break;
                 
-                case "3":
+                case CommandSetGameModeComputerVsComputer:
                     selected = GameMode.ComputerVsComputer;
                     break;
                 
@@ -199,7 +212,15 @@ public sealed class ConsoleGameRunner
                     break;
                 
                 default:
-                    WriteLine("Введите 1, 2 или 3.");
+                    WriteLine(
+                        "Введите " +
+                        CommandSetGameModeHumanVsHuman +
+                        ", " +
+                        CommandSetGameModeHumanVsComputer +
+                        " или " +
+                        CommandSetGameModeComputerVsComputer +
+                        "."
+                    );
                     break;
             }
         }
@@ -246,7 +267,7 @@ public sealed class ConsoleGameRunner
                 var ended = item.EndedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—";
                 
                 WriteLine(
-                    $"  {item.StartedAt:yyyy-MM-dd HH:mm:ss} → {ended} | " +
+                    $"  {item.StartedAt:yyyy-MM-dd HH:mm:ss} -> {ended} | " +
                     $"{DescribeResult(item.Result),-20} | {DescribeMode(item.Mode),-30} | ходов: {item.MovesCount}"
                 );
             }
