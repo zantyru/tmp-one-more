@@ -1,10 +1,9 @@
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Persistence.Sqlite;
 
-/// <summary>
-/// Создаёт схему БД при первом запуске. DDL живёт в адаптере, а не в UI или сервисе.
-/// </summary>
+
 public sealed class SqliteSchemaInitializer
 {
     private readonly IDbConnectionFactory _connections;
@@ -15,9 +14,11 @@ public sealed class SqliteSchemaInitializer
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = """
             CREATE TABLE IF NOT EXISTS GameSessions (
                 Id          TEXT    NOT NULL PRIMARY KEY,

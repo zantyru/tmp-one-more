@@ -1,12 +1,11 @@
+using static System.Console;
 using TicTacToe.Application;
 using TicTacToe.Gameplay;
-using static System.Console;
+
 
 namespace TicTacToe.Console;
 
-/// <summary>
-/// Консольный UI. Знает только о сервисном слое: ни SQL, ни правил игры здесь нет.
-/// </summary>
+
 public sealed class ConsoleGameRunner
 {
     private static readonly TimeSpan ComputerDelay = TimeSpan.FromMilliseconds(400);
@@ -53,9 +52,11 @@ public sealed class ConsoleGameRunner
             }
             else
             {
-                WriteLine(session.IsFinished
+                WriteLine(
+                    session.IsFinished
                     ? "Команды: new — новая игра, history — история, exit — выход."
-                    : "Ваш ход: 1–9. Команды: abort — прервать, history — история, exit — выход.");
+                    : "Ваш ход: 1–9. Команды: abort — прервать, history — история, exit — выход."
+                );
 
                 Write("> ");
                 var input = ReadLine()?.Trim().ToLowerInvariant();
@@ -136,7 +137,9 @@ public sealed class ConsoleGameRunner
 
         for (var row = 0; row < Board.Size; row++)
         {
-            var cells = Enumerable.Range(row * Board.Size, Board.Size)
+            var cells =
+                Enumerable
+                .Range(row * Board.Size, Board.Size)
                 .Select(index => session.Board[index] == Mark.None
                     ? (index + 1).ToString()
                     : session.Board[index].ToChar().ToString());
@@ -182,15 +185,19 @@ public sealed class ConsoleGameRunner
                 case "1":
                     selected = GameMode.HumanVsHuman;
                     break;
+                
                 case "2":
                     selected = GameMode.HumanVsComputer;
                     break;
+                
                 case "3":
                     selected = GameMode.ComputerVsComputer;
                     break;
+                
                 case null:
                     selected = GameMode.HumanVsHuman;
                     break;
+                
                 default:
                     WriteLine("Введите 1, 2 или 3.");
                     break;
@@ -237,8 +244,11 @@ public sealed class ConsoleGameRunner
             foreach (var item in history)
             {
                 var ended = item.EndedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—";
-                WriteLine($"  {item.StartedAt:yyyy-MM-dd HH:mm:ss} → {ended} | " +
-                          $"{DescribeResult(item.Result),-20} | {DescribeMode(item.Mode),-30} | ходов: {item.MovesCount}");
+                
+                WriteLine(
+                    $"  {item.StartedAt:yyyy-MM-dd HH:mm:ss} → {ended} | " +
+                    $"{DescribeResult(item.Result),-20} | {DescribeMode(item.Mode),-30} | ходов: {item.MovesCount}"
+                );
             }
         }
 

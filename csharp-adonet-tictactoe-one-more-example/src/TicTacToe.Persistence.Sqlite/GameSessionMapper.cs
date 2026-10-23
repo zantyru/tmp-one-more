@@ -3,9 +3,10 @@ using System.Globalization;
 using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Persistence.Sqlite;
 
-/// <summary>Единственное место, где известны имена и индексы колонок.</summary>
+
 internal static class GameSessionMapper
 {
     public const string SelectColumns =
@@ -20,7 +21,8 @@ internal static class GameSessionMapper
             Mode: (GameMode)reader.GetInt32(4),
             BoardState: reader.GetString(5),
             CurrentMark: MarkExtensions.FromChar(reader.GetString(6)[0]),
-            MovesCount: reader.GetInt32(7));
+            MovesCount: reader.GetInt32(7)
+        );
 
     private static DateTimeOffset ParseDate(string value)
         => DateTimeOffset.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);

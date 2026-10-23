@@ -1,6 +1,6 @@
 namespace TicTacToe.Gameplay;
 
-/// <summary>Метка клетки: пусто, крестик или нолик.</summary>
+
 public enum Mark
 {
     None = 0,
@@ -8,9 +8,9 @@ public enum Mark
     O = 2
 }
 
+
 public static class MarkExtensions
 {
-    /// <summary>Противоположная метка. Для <see cref="Mark.None"/> возвращает <see cref="Mark.None"/>.</summary>
     public static Mark Opponent(this Mark mark)
         => mark switch
         {

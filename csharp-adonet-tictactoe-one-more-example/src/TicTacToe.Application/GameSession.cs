@@ -1,12 +1,10 @@
 using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Application;
 
-/// <summary>
-/// Игровая сессия: поле, очередь хода, результат и метаданные.
-/// Не знает ни о БД, ни об UI; умеет создаваться с нуля и восстанавливаться из снимка.
-/// </summary>
+
 public sealed class GameSession
 {
     private GameSession(
@@ -47,10 +45,6 @@ public sealed class GameSession
     public int MovesCount
         => Board.MovesCount;
 
-    /// <summary>
-    /// Ходит ли сейчас компьютер. Политика режима: в «человек против компьютера»
-    /// человек играет крестиками, компьютер — ноликами.
-    /// </summary>
     public bool IsComputerTurn
         => !IsFinished && Mode switch
         {
@@ -61,7 +55,15 @@ public sealed class GameSession
         };
 
     public static GameSession Start(GameMode mode, DateTimeOffset now)
-        => new(Guid.NewGuid(), now, null, mode, new Board(), Mark.X, SessionResult.InProgress);
+        => new(
+            id: Guid.NewGuid(),
+            startedAt: now,
+            endedAt: null,
+            mode: mode,
+            board: new Board(),
+            currentMark: Mark.X,
+            result: SessionResult.InProgress
+        );
 
     public static GameSession Restore(GameSessionSnapshot snapshot)
     {
@@ -112,16 +114,16 @@ public sealed class GameSession
         }
 
         return new GameSession(
-            snapshot.Id,
-            snapshot.StartedAt,
-            snapshot.EndedAt,
-            snapshot.Mode,
-            board,
-            snapshot.CurrentMark,
-            snapshot.Result);
+            id: snapshot.Id,
+            startedAt: snapshot.StartedAt,
+            endedAt: snapshot.EndedAt,
+            mode: snapshot.Mode,
+            board: board,
+            currentMark: snapshot.CurrentMark,
+            result: snapshot.Result
+        );
     }
 
-    /// <summary>Ставит метку текущего игрока и пересчитывает результат.</summary>
     public MoveOutcome ApplyMove(int cellIndex, DateTimeOffset now)
     {
         if (IsFinished)
@@ -169,12 +171,13 @@ public sealed class GameSession
 
     public GameSessionSnapshot ToSnapshot()
         => new(
-            Id,
-            StartedAt,
-            EndedAt,
-            Result,
-            Mode,
-            Board.ToStateString(),
-            CurrentMark,
-            MovesCount);
+            Id: Id,
+            StartedAt: StartedAt,
+            EndedAt: EndedAt,
+            Result: Result,
+            Mode: Mode,
+            BoardState: Board.ToStateString(),
+            CurrentMark: CurrentMark,
+            MovesCount: MovesCount
+        );
 }

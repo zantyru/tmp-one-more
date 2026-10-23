@@ -1,9 +1,6 @@
 namespace TicTacToe.Gameplay;
 
-/// <summary>
-/// Игровое поле 3x3. Не знает ни о БД, ни об UI: только правила.
-/// Состояние поля — девять меток; индекс 0..8 соответствует порядку слева-направо, сверху-вниз.
-/// </summary>
+
 public sealed class Board
 {
     public const int Size = 3;
@@ -47,7 +44,6 @@ public sealed class Board
     public bool IsEmpty(int index)
         => _cells[index] == Mark.None;
 
-    /// <summary>Пытается поставить метку. Возвращает false, если клетка занята или индекс вне диапазона.</summary>
     public bool TryPlace(int index, Mark mark)
     {
         if (index < 0 || index >= CellCount)
@@ -81,7 +77,6 @@ public sealed class Board
         }
     }
 
-    /// <summary>Вычисляет результат партии по текущему состоянию поля.</summary>
     public SessionResult Evaluate()
     {
         var winningMark = Mark.None;
@@ -89,7 +84,8 @@ public sealed class Board
         foreach (var line in WinningLines)
         {
             var first = _cells[line[0]];
-            var lineIsWinning = first != Mark.None
+            var lineIsWinning =
+                first != Mark.None
                 && _cells[line[1]] == first
                 && _cells[line[2]] == first;
 
@@ -113,7 +109,6 @@ public sealed class Board
     public Board Clone()
         => new(_cells);
 
-    /// <summary>Строка из девяти символов: 'X', 'O' или пробел.</summary>
     public string ToStateString()
         => new(_cells.Select(mark => mark.ToChar()).ToArray());
 

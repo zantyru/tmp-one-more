@@ -3,13 +3,10 @@ using System.Globalization;
 using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Persistence.Sqlite;
 
-/// <summary>
-/// Репозиторий сессий на «чистом» ADO.NET поверх Microsoft.Data.Sqlite.
-/// Работает с базовыми типами System.Data.Common, поэтому на уровне сигнатур
-/// не зависит от конкретного провайдера.
-/// </summary>
+
 public sealed class SqliteGameSessionRepository : IGameSessionRepository
 {
     private readonly IDbConnectionFactory _connections;
@@ -20,9 +17,11 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
     public async Task<GameSessionSnapshot?> FindUnfinishedAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = $"""
             SELECT {GameSessionMapper.SelectColumns}
             FROM GameSessions
@@ -35,7 +34,8 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
 
-        return await reader.ReadAsync(cancellationToken)
+        return await
+            reader.ReadAsync(cancellationToken)
             ? GameSessionMapper.Map(reader)
             : null;
     }
@@ -43,9 +43,11 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
     public async Task<GameSessionSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = $"""
             SELECT {GameSessionMapper.SelectColumns}
             FROM GameSessions
@@ -56,7 +58,8 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
 
-        return await reader.ReadAsync(cancellationToken)
+        return await
+            reader.ReadAsync(cancellationToken)
             ? GameSessionMapper.Map(reader)
             : null;
     }
@@ -66,9 +69,11 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
         ArgumentNullException.ThrowIfNull(snapshot);
 
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = """
             INSERT INTO GameSessions
                 (Id, StartedAt, EndedAt, Result, Mode, BoardState, CurrentMark, MovesCount)
@@ -93,9 +98,11 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
         ArgumentNullException.ThrowIfNull(snapshot);
 
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = """
             UPDATE GameSessions
             SET EndedAt = @endedAt,
@@ -131,9 +138,11 @@ public sealed class SqliteGameSessionRepository : IGameSessionRepository
         }
 
         await using var connection = _connections.Create();
+
         await connection.OpenAsync(cancellationToken);
 
         await using var command = connection.CreateCommand();
+
         command.CommandText = $"""
             SELECT {GameSessionMapper.SelectColumns}
             FROM GameSessions

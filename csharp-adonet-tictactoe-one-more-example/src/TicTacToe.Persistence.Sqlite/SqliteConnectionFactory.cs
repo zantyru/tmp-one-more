@@ -2,9 +2,10 @@ using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Persistence.Sqlite;
 
-/// <summary>Создаёт соединения с файлом SQLite. Одно соединение — одна операция.</summary>
+
 public sealed class SqliteConnectionFactory : IDbConnectionFactory
 {
     private readonly string _connectionString;
@@ -28,8 +29,7 @@ public sealed class SqliteConnectionFactory : IDbConnectionFactory
         {
             DataSource = fullPath,
             Mode = SqliteOpenMode.ReadWriteCreate,
-            ForeignKeys = true,
-            // Соединение открывается на операцию; пул не нужен и мешает удалять файл БД в тестах.
+            ForeignKeys = true,            
             Pooling = false
         }.ToString();
     }

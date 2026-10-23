@@ -1,12 +1,10 @@
 using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Application;
 
-/// <summary>
-/// Оркестрация игровой сессии: старт, ходы, прерывание, восстановление.
-/// Правила игры живут в <see cref="Gameplay.Board"/>, хранение — в репозитории.
-/// </summary>
+
 public sealed class GameSessionService : IGameSessionService, IDisposable
 {
     private readonly IGameSessionRepository _repository;
@@ -56,8 +54,12 @@ public sealed class GameSessionService : IGameSessionService, IDisposable
                     catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
                     {
                         await _repository.UpdateAsync(
-                            snapshot with { Result = SessionResult.Aborted, EndedAt = _time.GetUtcNow() },
-                            cancellationToken);
+                            snapshot with {
+                                Result = SessionResult.Aborted,
+                                EndedAt = _time.GetUtcNow()
+                            },
+                            cancellationToken
+                        );
 
                         result = null;
                     }
@@ -92,8 +94,12 @@ public sealed class GameSessionService : IGameSessionService, IDisposable
                 if (unfinished is not null)
                 {
                     await _repository.UpdateAsync(
-                        unfinished with { Result = SessionResult.Aborted, EndedAt = now },
-                        cancellationToken);
+                        unfinished with {
+                            Result = SessionResult.Aborted,
+                            EndedAt = now
+                        },
+                        cancellationToken
+                    );
                 }
             }
 

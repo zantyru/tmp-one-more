@@ -2,7 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TicTacToe.Application;
 using TicTacToe.Persistence.Sqlite;
 
+
 namespace TicTacToe.Console;
+
 
 internal static class Program
 {
@@ -17,8 +19,8 @@ internal static class Program
         }
 
         var databasePath = Path.Combine(AppContext.BaseDirectory, "tictactoe.db");
-
         var services = new ServiceCollection();
+
         services.AddTicTacToeApplication();
         services.AddSqlitePersistence(databasePath);
 
