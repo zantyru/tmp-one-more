@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>TicTacToe.Persistence.Sqlite</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TicTacToe.Gameplay\TicTacToe.Gameplay.csproj" />
+    <ProjectReference Include="..\TicTacToe.Persistence.Abstractions\TicTacToe.Persistence.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

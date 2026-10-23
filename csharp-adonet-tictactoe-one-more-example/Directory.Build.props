@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!-- Базовая версия .NET для всех проектов. WPF переопределяет её на net8.0-windows. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+</Project>
