@@ -41,8 +41,10 @@
                             FontSize="48" FontWeight="SemiBold"
                             Content="{Binding Display}"
                             IsEnabled="{Binding IsEnabled}"
-                            Command="{Binding DataContext.CellCommand,
-                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            Command="{
+                                Binding DataContext.CellCommand,
+                                RelativeSource={RelativeSource AncestorType=ItemsControl}
+                            }"
                             CommandParameter="{Binding Index}" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

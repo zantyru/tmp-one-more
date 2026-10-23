@@ -5,11 +5,10 @@ using TicTacToe.Application;
 using TicTacToe.Persistence.Sqlite;
 using TicTacToe.Wpf.ViewModels;
 
+
 namespace TicTacToe.Wpf;
 
-// Явная квалификация базового типа обязательна: using TicTacToe.Application; вносит
-// в область видимости одноимённое пространство имён, и короткое «Application»
-// разрешается в него, а не в System.Windows.Application (CS0118).
+
 public partial class App : System.Windows.Application
 {
     private ServiceProvider? _provider;
@@ -21,8 +20,8 @@ public partial class App : System.Windows.Application
         try
         {
             var databasePath = Path.Combine(AppContext.BaseDirectory, "tictactoe.db");
-
             var services = new ServiceCollection();
+
             services.AddTicTacToeApplication();
             services.AddSqlitePersistence(databasePath);
             services.AddSingleton<MainViewModel>();

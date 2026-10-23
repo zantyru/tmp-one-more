@@ -1,9 +1,10 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+
 namespace TicTacToe.Wpf.Infrastructure;
 
-/// <summary>Минимальная база для ViewModel: INotifyPropertyChanged без сторонних библиотек.</summary>
+
 public abstract class ObservableObject : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,15 +1,17 @@
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Persistence.Sqlite.Tests;
 
-/// <summary>Временный файл SQLite на один тест. Файл удаляется в Dispose.</summary>
+
 public sealed class SqliteTestDatabase : IDisposable
 {
     public SqliteTestDatabase()
     {
         DatabasePath = Path.Combine(
             Path.GetTempPath(),
-            $"tictactoe-test-{Guid.NewGuid():N}.db");
+            $"tictactoe-test-{Guid.NewGuid():N}.db"
+        );
 
         Factory = new SqliteConnectionFactory(DatabasePath);
         Repository = new SqliteGameSessionRepository(Factory);

@@ -3,12 +3,10 @@ using TicTacToe.Application;
 using TicTacToe.Gameplay;
 using TicTacToe.Wpf.Infrastructure;
 
+
 namespace TicTacToe.Wpf.ViewModels;
 
-/// <summary>
-/// ViewModel главного окна. Не содержит правил игры и SQL:
-/// вызывает сервисный слой и отображает его состояние.
-/// </summary>
+
 public sealed class MainViewModel : ObservableObject
 {
     private readonly IGameSessionService _service;
@@ -22,7 +20,10 @@ public sealed class MainViewModel : ObservableObject
         _service = service ?? throw new ArgumentNullException(nameof(service));
 
         Cells = new ObservableCollection<CellViewModel>(
-            Enumerable.Range(0, Board.CellCount).Select(index => new CellViewModel(index)));
+            Enumerable
+            .Range(0, Board.CellCount)
+            .Select(index => new CellViewModel(index))
+        );
 
         Modes = new[]
         {
@@ -35,13 +36,18 @@ public sealed class MainViewModel : ObservableObject
 
         CellCommand = new AsyncRelayCommand(
             parameter => CellAsync(parameter is int index ? index : -1),
-            _ => CanHumanMove());
+            _ => CanHumanMove()
+        );
 
-        NewGameCommand = new AsyncRelayCommand(_ => NewGameAsync(), _ => !IsBusy);
+        NewGameCommand = new AsyncRelayCommand(
+            _ => NewGameAsync(),
+            _ => !IsBusy
+        );
 
         AbortCommand = new AsyncRelayCommand(
             _ => AbortAsync(),
-            _ => _service.Current is { IsFinished: false });
+            _ => _service.Current is { IsFinished: false }
+        );
 
         CellCommand.ExecutionFailed += OnCommandFailed;
         NewGameCommand.ExecutionFailed += OnCommandFailed;
@@ -62,24 +68,22 @@ public sealed class MainViewModel : ObservableObject
 
     public ModeOption? SelectedMode
     {
-        get
-            => _selectedMode;
-        set
-            => Set(ref _selectedMode, value);
+        get => _selectedMode;
+
+        set => Set(ref _selectedMode, value);
     }
 
     public string StatusText
     {
-        get
-            => _statusText;
-        private set
-            => Set(ref _statusText, value);
+        get => _statusText;
+
+        private set => Set(ref _statusText, value);
     }
 
     public bool IsBusy
     {
-        get
-            => _isBusy;
+        get => _isBusy;
+
         private set
         {
             if (Set(ref _isBusy, value))
@@ -245,8 +249,11 @@ public sealed class MainViewModel : ObservableObject
         foreach (var item in items)
         {
             var ended = item.EndedAt?.ToString("HH:mm:ss") ?? "—";
-            History.Add($"{item.StartedAt:yyyy-MM-dd HH:mm} → {ended} | " +
-                        $"{DescribeResult(item.Result)} | {DescribeMode(item.Mode)} | {item.MovesCount}");
+
+            History.Add(
+                $"{item.StartedAt:yyyy-MM-dd HH:mm} -> {ended} | " +
+                $"{DescribeResult(item.Result)} | {DescribeMode(item.Mode)} | {item.MovesCount}"
+            );
         }
     }
 
@@ -271,6 +278,7 @@ public sealed class MainViewModel : ObservableObject
         else
         {
             var who = session.IsComputerTurn ? "компьютер" : "вы";
+
             result = $"Ход {session.CurrentMark.ToChar()} — {who}. " +
                      $"Ходов: {session.MovesCount}. Режим: {DescribeMode(session.Mode)}.";
         }

@@ -2,7 +2,9 @@ using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 using Xunit;
 
+
 namespace TicTacToe.Application.Tests;
+
 
 public sealed class GameSessionTests
 {
@@ -15,7 +17,6 @@ public sealed class GameSessionTests
 
         Assert.True(session.ApplyMove(0, Now).Accepted);
         Assert.Equal(Mark.O, session.CurrentMark);
-
         Assert.True(session.ApplyMove(1, Now).Accepted);
         Assert.Equal(Mark.X, session.CurrentMark);
     }
@@ -24,6 +25,7 @@ public sealed class GameSessionTests
     public void ApplyMove_FinishingMove_SetsEndedAt()
     {
         var session = GameSession.Start(GameMode.HumanVsHuman, Now);
+
         session.ApplyMove(0, Now); // X
         session.ApplyMove(3, Now); // O
         session.ApplyMove(1, Now); // X
@@ -41,6 +43,7 @@ public sealed class GameSessionTests
     public void ApplyMove_AfterFinish_IsRejected()
     {
         var session = GameSession.Start(GameMode.HumanVsHuman, Now);
+
         session.ApplyMove(0, Now);
         session.ApplyMove(3, Now);
         session.ApplyMove(1, Now);
@@ -66,6 +69,7 @@ public sealed class GameSessionTests
     public void Snapshot_RoundTripsThroughRestore()
     {
         var session = GameSession.Start(GameMode.HumanVsComputer, Now);
+
         session.ApplyMove(0, Now);
         session.ApplyMove(4, Now);
 
@@ -82,14 +86,15 @@ public sealed class GameSessionTests
     public void Restore_RejectsSnapshotWithMismatchedMovesCount()
     {
         var snapshot = new GameSessionSnapshot(
-            Guid.NewGuid(),
-            Now,
-            null,
-            SessionResult.InProgress,
-            GameMode.HumanVsHuman,
-            "X        ",
-            Mark.O,
-            MovesCount: 3);
+            Id: Guid.NewGuid(),
+            StartedAt: Now,
+            EndedAt: null,
+            Result: SessionResult.InProgress,
+            Mode: GameMode.HumanVsHuman,
+            BoardState: "X        ",
+            CurrentMark: Mark.O,
+            MovesCount: 3
+        );
 
         Assert.Throws<InvalidOperationException>(() => GameSession.Restore(snapshot));
     }
@@ -98,12 +103,13 @@ public sealed class GameSessionTests
     public void IsComputerTurn_RespectsModeAndMark()
     {
         var humanVsComputer = GameSession.Start(GameMode.HumanVsComputer, Now);
-        Assert.False(humanVsComputer.IsComputerTurn); // X — человек
 
+        Assert.False(humanVsComputer.IsComputerTurn); // X - человек
         humanVsComputer.ApplyMove(0, Now);
-        Assert.True(humanVsComputer.IsComputerTurn);  // O — компьютер
+        Assert.True(humanVsComputer.IsComputerTurn);  // O - компьютер
 
         var computerVsComputer = GameSession.Start(GameMode.ComputerVsComputer, Now);
+
         Assert.True(computerVsComputer.IsComputerTurn);
     }
 }

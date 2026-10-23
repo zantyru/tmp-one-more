@@ -2,7 +2,9 @@ using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 using Xunit;
 
+
 namespace TicTacToe.Application.Tests;
+
 
 public sealed class GameSessionServiceTests
 {
@@ -19,10 +21,9 @@ public sealed class GameSessionServiceTests
     public async Task StartNewAsync_InsertsInProgressSession()
     {
         var (service, repository, _) = Create();
-
         var session = await service.StartNewAsync(GameMode.HumanVsHuman);
-
         var stored = Assert.Single(repository.Items);
+
         Assert.Equal(session.Id, stored.Id);
         Assert.Equal(SessionResult.InProgress, stored.Result);
         Assert.Equal(Mark.X, stored.CurrentMark);
@@ -50,7 +51,6 @@ public sealed class GameSessionServiceTests
     {
         var (service, repository, _) = Create();
 
-        // Поле заполнено полностью (победа X), но сессия помечена как незавершённая.
         await repository.InsertAsync(new GameSessionSnapshot(
             Guid.NewGuid(),
             DateTimeOffset.UtcNow,
@@ -59,7 +59,8 @@ public sealed class GameSessionServiceTests
             GameMode.HumanVsHuman,
             "XXXXXXXXX",
             Mark.X,
-            Board.CellCount));
+            Board.CellCount)
+        );
 
         var resumed = await service.TryResumeAsync();
 
@@ -79,6 +80,7 @@ public sealed class GameSessionServiceTests
         Assert.True(outcome.Accepted);
 
         var stored = Assert.Single(repository.Items);
+
         Assert.Equal('X', stored.BoardState[4]);
         Assert.Equal(Mark.O, stored.CurrentMark);
         Assert.Equal(1, stored.MovesCount);
@@ -88,6 +90,7 @@ public sealed class GameSessionServiceTests
     public async Task MakeHumanMoveAsync_RejectsOccupiedCell()
     {
         var (service, _, _) = Create();
+
         await service.StartNewAsync(GameMode.HumanVsHuman);
         await service.MakeHumanMoveAsync(0);
 
@@ -101,6 +104,7 @@ public sealed class GameSessionServiceTests
     public async Task MakeHumanMoveAsync_RejectsMoveWhenComputerTurn()
     {
         var (service, _, _) = Create();
+
         await service.StartNewAsync(GameMode.HumanVsComputer);
         await service.MakeHumanMoveAsync(0);
 
@@ -113,6 +117,7 @@ public sealed class GameSessionServiceTests
     public async Task MakeComputerMoveAsync_PlacesMarkWhenComputerTurn()
     {
         var (service, repository, _) = Create();
+
         await service.StartNewAsync(GameMode.HumanVsComputer);
         await service.MakeHumanMoveAsync(0);
 
@@ -121,6 +126,7 @@ public sealed class GameSessionServiceTests
         Assert.True(outcome.Accepted);
 
         var stored = Assert.Single(repository.Items);
+
         Assert.Equal(1, stored.BoardState.Count(c => c == 'O'));
         Assert.Equal(2, stored.BoardState.Count(c => c != ' '));
     }
@@ -129,6 +135,7 @@ public sealed class GameSessionServiceTests
     public async Task AbortAsync_MarksSessionAborted()
     {
         var (service, repository, _) = Create();
+
         await service.StartNewAsync(GameMode.HumanVsHuman);
 
         var outcome = await service.AbortAsync();
@@ -142,8 +149,8 @@ public sealed class GameSessionServiceTests
     public async Task StartNewAsync_AbortsPreviousUnfinishedSession()
     {
         var (service, repository, _) = Create();
-        await service.StartNewAsync(GameMode.HumanVsHuman);
 
+        await service.StartNewAsync(GameMode.HumanVsHuman);
         await service.StartNewAsync(GameMode.HumanVsComputer);
 
         Assert.Equal(2, repository.Items.Count);
@@ -155,6 +162,7 @@ public sealed class GameSessionServiceTests
     public async Task GetHistoryAsync_ReturnsNewestFirst()
     {
         var (service, _, time) = Create();
+
         await service.StartNewAsync(GameMode.HumanVsHuman);
         await service.AbortAsync();
 

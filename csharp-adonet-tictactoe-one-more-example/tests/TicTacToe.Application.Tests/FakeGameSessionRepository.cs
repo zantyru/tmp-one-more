@@ -1,9 +1,10 @@
 using TicTacToe.Gameplay;
 using TicTacToe.Persistence.Abstractions;
 
+
 namespace TicTacToe.Application.Tests;
 
-/// <summary>Простое in-memory хранилище для тестов сервисного слоя.</summary>
+
 public sealed class FakeGameSessionRepository : IGameSessionRepository
 {
     private readonly List<GameSessionSnapshot> _items = new();
@@ -13,7 +14,8 @@ public sealed class FakeGameSessionRepository : IGameSessionRepository
 
     public Task<GameSessionSnapshot?> FindUnfinishedAsync(CancellationToken cancellationToken = default)
     {
-        var unfinished = _items
+        var unfinished =
+            _items
             .Where(item => item.Result == SessionResult.InProgress)
             .OrderByDescending(item => item.StartedAt)
             .FirstOrDefault();
@@ -52,7 +54,9 @@ public sealed class FakeGameSessionRepository : IGameSessionRepository
 
     public Task<IReadOnlyList<GameSessionSnapshot>> GetRecentAsync(
         int take,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
         => Task.FromResult<IReadOnlyList<GameSessionSnapshot>>(
-            _items.OrderByDescending(item => item.StartedAt).Take(take).ToList());
+            _items.OrderByDescending(item => item.StartedAt).Take(take).ToList()
+        );
 }

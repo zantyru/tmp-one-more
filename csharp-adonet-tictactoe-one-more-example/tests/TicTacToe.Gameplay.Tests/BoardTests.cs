@@ -1,7 +1,9 @@
 using TicTacToe.Gameplay;
 using Xunit;
 
+
 namespace TicTacToe.Gameplay.Tests;
+
 
 public sealed class BoardTests
 {
@@ -43,8 +45,8 @@ public sealed class BoardTests
     public void TryPlace_RejectsOccupiedCell()
     {
         var board = new Board();
-        Assert.True(board.TryPlace(4, Mark.X));
 
+        Assert.True(board.TryPlace(4, Mark.X));
         Assert.False(board.TryPlace(4, Mark.O));
         Assert.Equal(Mark.X, board[4]);
     }

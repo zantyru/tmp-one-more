@@ -1,6 +1,6 @@
 namespace TicTacToe.Application.Tests;
 
-/// <summary>Управляемое время для детерминированных тестов.</summary>
+
 public sealed class FixedTimeProvider : TimeProvider
 {
     private DateTimeOffset _now;

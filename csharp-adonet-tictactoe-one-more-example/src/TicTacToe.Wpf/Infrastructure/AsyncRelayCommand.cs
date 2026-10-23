@@ -1,16 +1,16 @@
 using System.Windows.Input;
 
+
 namespace TicTacToe.Wpf.Infrastructure;
 
-/// <summary>
-/// Асинхронная команда для WPF. <c>async void</c> здесь неизбежен, потому что ICommand.Execute
-/// возвращает void; исключение обязательно перехватывается и передаётся наружу событием.
-/// </summary>
+
 public sealed class AsyncRelayCommand : ICommand
 {
+    public event EventHandler? CanExecuteChanged;
+    public event Action<Exception>? ExecutionFailed;
+
     private readonly Func<object?, Task> _execute;
     private readonly Func<object?, bool>? _canExecute;
-
     private bool _isRunning;
 
     public AsyncRelayCommand(Func<object?, Task> execute, Func<object?, bool>? canExecute = null)
@@ -23,11 +23,6 @@ public sealed class AsyncRelayCommand : ICommand
         : this(_ => execute(), canExecute is null ? null : _ => canExecute())
     {
     }
-
-    public event EventHandler? CanExecuteChanged;
-
-    /// <summary>Ошибка, возникшая при выполнении команды. UI должен показать её пользователю.</summary>
-    public event Action<Exception>? ExecutionFailed;
 
     public bool CanExecute(object? parameter)
         => !_isRunning && (_canExecute?.Invoke(parameter) ?? true);
